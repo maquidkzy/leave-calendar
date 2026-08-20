@@ -16,10 +16,8 @@ interface Leave {
   endDate: string;
 }
 
-const START_DATE = new Date(2026, 5, 1); // June 2026
-
 export default function LeaveCalendarApp() {
-  const [currentDate, setCurrentDate] = useState(START_DATE);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [leaves, setLeaves] = useState<Leave[]>([]);
   
   // Filters
@@ -58,7 +56,7 @@ export default function LeaveCalendarApp() {
 
   const handlePrevMonth = () => {
     const prev = subMonths(currentDate, 1);
-    if (!isBefore(prev, START_DATE)) {
+    if (true) {
       setCurrentDate(prev);
     }
   };
@@ -247,7 +245,7 @@ export default function LeaveCalendarApp() {
       {/* Main Content */}
       <div className="main-content">
         <div className="calendar-header">
-          <button className="btn-icon" onClick={handlePrevMonth} disabled={isSameMonth(currentDate, START_DATE)}>
+          <button className="btn-icon" onClick={handlePrevMonth} >
             &lt;
           </button>
           <button className="btn-icon" onClick={handleNextMonth}>
@@ -409,7 +407,7 @@ export default function LeaveCalendarApp() {
               selected={dateRange}
               onSelect={setDateRange}
               defaultMonth={dateRange?.from || new Date()}
-              disabled={{ before: START_DATE }}
+              
             />
           </div>
 
