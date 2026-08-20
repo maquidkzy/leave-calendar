@@ -5,7 +5,7 @@ import { LeaveType } from '@prisma/client';
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const data = await request.json();
-    const { name, type, startDate, endDate } = data;
+    const { name, type, startDate, endDate, note } = data;
     const { id } = await params;
 
     const leave = await prisma.leave.update({
@@ -15,6 +15,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         ...(type && { type: type as LeaveType }),
         ...(startDate && { startDate: new Date(startDate) }),
         ...(endDate && { endDate: new Date(endDate) }),
+        ...(note !== undefined && { note }),
       }
     });
 

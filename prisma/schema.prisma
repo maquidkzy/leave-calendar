@@ -52,6 +52,7 @@ model Leave {
   type      LeaveType
   startDate DateTime
   endDate   DateTime
+  note      String?
   createdAt DateTime  @default(now())
 }
 

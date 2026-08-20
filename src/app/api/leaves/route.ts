@@ -37,8 +37,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
-    const { name, type, startDate, endDate } = data;
+    const { name, type, startDate, endDate, note } = await request.json();
 
     if (!name || !type || !startDate || !endDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -50,6 +49,7 @@ export async function POST(request: Request) {
         type: type as LeaveType,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        note: note || null,
       }
     });
 

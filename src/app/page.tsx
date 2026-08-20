@@ -14,6 +14,7 @@ interface Leave {
   type: LeaveType;
   startDate: string;
   endDate: string;
+  note?: string;
 }
 
 export default function LeaveCalendarApp() {
@@ -35,6 +36,7 @@ export default function LeaveCalendarApp() {
   const [formData, setFormData] = useState({
     name: '',
     type: 'SICK' as LeaveType,
+    note: '',
   });
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
@@ -72,14 +74,14 @@ export default function LeaveCalendarApp() {
   const openOffcanvas = (date?: Date, existingLeave?: Leave) => {
     if (existingLeave) {
       setEditId(existingLeave.id);
-      setFormData({ name: existingLeave.name, type: existingLeave.type });
+      setFormData({ name: existingLeave.name, type: existingLeave.type, note: existingLeave.note || '' });
       setDateRange({
         from: new Date(existingLeave.startDate),
         to: new Date(existingLeave.endDate)
       });
     } else {
       setEditId(null);
-      setFormData({ name: '', type: 'SICK' });
+      setFormData({ name: '', type: 'SICK', note: '' });
       setDateRange(date ? { from: date, to: undefined } : undefined);
     }
     setOffcanvasOpen(true);
@@ -399,7 +401,18 @@ export default function LeaveCalendarApp() {
             </button>
           </div>
 
-          <div style={{ marginBottom: '8px', fontSize: '0.75rem', color: 'var(--primary)', marginTop: '16px' }}>Select Date Range</div>
+          <div style={{ marginBottom: '8px', fontSize: '0.75rem', color: 'var(--primary)', marginTop: '16px' }}>Note (Optional)</div>
+          <div className="input-field" style={{ marginBottom: '16px' }}>
+            <input 
+              type="text" 
+              placeholder="Short note..." 
+              value={formData.note}
+              onChange={(e) => setFormData({...formData, note: e.target.value})}
+              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '8px', fontSize: '0.75rem', color: 'var(--primary)' }}>Select Date Range</div>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
             <DayPicker
               key={offcanvasOpen ? 'open' : 'closed'}
