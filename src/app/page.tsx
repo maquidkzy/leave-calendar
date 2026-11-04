@@ -39,6 +39,7 @@ export default function LeaveCalendarApp() {
     note: '',
   });
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [editPassword, setEditPassword] = useState('');
 
   useEffect(() => {
     fetchLeaves();
@@ -72,6 +73,7 @@ export default function LeaveCalendarApp() {
   };
 
   const openOffcanvas = (date?: Date, existingLeave?: Leave) => {
+    setEditPassword(''); // Always require the password to be typed again
     if (existingLeave) {
       setEditId(existingLeave.id);
       setFormData({ name: existingLeave.name, type: existingLeave.type, note: existingLeave.note || '' });
@@ -104,6 +106,11 @@ export default function LeaveCalendarApp() {
       return;
     }
 
+    if (!editPassword) {
+      alert('Please enter the password to save.');
+      return;
+    }
+
     const payload = {
       ...formData,
       startDate: format(dateRange.from, 'yyyy-MM-dd'),
@@ -116,12 +123,14 @@ export default function LeaveCalendarApp() {
     try {
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-edit-password': editPassword },
         body: JSON.stringify(payload)
       });
       if (res.ok) {
         fetchLeaves();
         closeOffcanvas();
+      } else if (res.status === 401) {
+        alert('Incorrect password.');
       } else {
         const errText = await res.text();
         console.error('Save failed:', errText);
@@ -136,11 +145,20 @@ export default function LeaveCalendarApp() {
   const handleDelete = async () => {
     if (!editId) return;
     if (!confirm('Are you sure you want to delete this leave?')) return;
+    if (!editPassword) {
+      alert('Please enter the password to delete.');
+      return;
+    }
     try {
-      const res = await fetch(`/api/leaves/${editId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/leaves/${editId}`, {
+        method: 'DELETE',
+        headers: { 'x-edit-password': editPassword }
+      });
       if (res.ok) {
         fetchLeaves();
         closeOffcanvas();
+      } else if (res.status === 401) {
+        alert('Incorrect password.');
       }
     } catch (error) {
       console.error(error);
@@ -421,6 +439,18 @@ export default function LeaveCalendarApp() {
               onSelect={setDateRange}
               defaultMonth={dateRange?.from || new Date()}
               
+            />
+          </div>
+
+          <div style={{ marginBottom: '8px', fontSize: '0.75rem', color: 'var(--primary)' }}>Password</div>
+          <div className="input-field" style={{ marginBottom: '16px' }}>
+            <input
+              type="password"
+              placeholder="Enter password to save"
+              value={editPassword}
+              onChange={(e) => setEditPassword(e.target.value)}
+              autoComplete="new-password"
+              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' }}
             />
           </div>
 

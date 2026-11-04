@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { LeaveType } from '@prisma/client';
+import { requireEditPassword } from '@/lib/auth';
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = requireEditPassword(request);
+  if (authError) return authError;
+
   try {
     const data = await request.json();
     const { name, type, startDate, endDate, note } = data;
@@ -27,6 +31,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = requireEditPassword(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     await prisma.leave.delete({
