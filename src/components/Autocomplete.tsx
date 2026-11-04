@@ -8,7 +8,7 @@ const TEAM_MEMBERS = [
   'Phornsek Dittakorn',
   'Rattapon Intarathoot',
   'Supang Nuammano',
-  'Treesmorn Wanwarawan'
+  'Takdanai Cherdchookitkul'
 ];
 
 interface AutocompleteProps {
